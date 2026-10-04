@@ -1,19 +1,7 @@
 // lil2-mdast-util-from-markdown: markdown to an mdast arena.
 
-import { combineAll, createParser, parseDocument } from "./micromark/parse.lil";
-import { Parser } from "./micromark/tokenizer.lil";
-import { FromMarkdown, installCommonmark } from "./from-markdown.lil";
-import { Tree } from "./tree.lil";
-
-// Parses `value` into the typed arena (root: node 0). The other lil2 layers use this.
-export Tree fromMarkdownTree(string value) {
-  Parser parser = createParser(combineAll([]));
-  int[] events = parseDocument(parser, value);
-  FromMarkdown compiler = new FromMarkdown(parser);
-  installCommonmark(compiler);
-  compiler.compile(events);
-  return compiler.tree;
-}
+import { fromMarkdownTree } from "./mdast/parse.lil";
+import { Tree } from "./mdast/tree.lil";
 
 // The tree as positional columns (the arena's own arrays, not copies), indexed by node id; node 0 is the
 // root. Every enumeration is an int: `kind` is a `K_*`, `identifier` an id into `identifiers` (-1: none),
