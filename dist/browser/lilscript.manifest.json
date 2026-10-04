@@ -13,8 +13,8 @@
           "closure": [
             "from-markdown.js"
           ],
-          "row": 22453,
-          "raw_row": 70071
+          "row": 13748,
+          "raw_row": 49944
         }
       ],
       "files": [
@@ -51,16 +51,16 @@
           "anchored": true,
           "imports": [],
           "dynamic_imports": [],
-          "bytes": 70071,
-          "codec_bytes": 22453,
-          "sha256": "f1b98c07336cc68d87d4fce8ef93c574403898bbe3d85a59ff3b5bccb6b348ff"
+          "bytes": 49944,
+          "codec_bytes": 13748,
+          "sha256": "a6b4e140551de3d4f0f879d154168e4feddec782d3b0d77aa00de889c5a2700f"
         }
       ],
       "side_effects": [
         "from-markdown.js"
       ],
-      "codec_total": 22453,
-      "rows_total": 22453,
+      "codec_total": 13748,
+      "rows_total": 13748,
       "setters": 0,
       "output": "primary",
       "codec": "brotli",
@@ -76,38 +76,38 @@
         }
       },
       "policy_fingerprint": [
-        28,
-        166,
-        175,
-        34,
-        137,
-        21,
-        232,
-        155,
-        212,
-        191,
-        198,
-        164,
-        242,
-        210,
-        158,
-        35,
-        121,
-        106,
-        43,
-        133,
-        114,
-        31,
-        81,
-        198,
-        129,
+        97,
+        18,
+        180,
+        113,
+        223,
+        109,
+        60,
+        44,
+        124,
         32,
-        85,
-        236,
-        251,
-        245,
-        115,
-        209
+        47,
+        153,
+        0,
+        57,
+        35,
+        233,
+        246,
+        118,
+        179,
+        155,
+        16,
+        2,
+        149,
+        6,
+        93,
+        101,
+        83,
+        42,
+        221,
+        204,
+        182,
+        182
       ]
     }
   ],

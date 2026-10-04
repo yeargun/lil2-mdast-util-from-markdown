@@ -1,0 +1,1 @@
+import {fromMarkdown} from './from-markdown.js'; import {fromColumns} from '../rows-mdast.mjs'; export const run = md => fromMarkdown(md); export const view = md => JSON.stringify(fromColumns(fromMarkdown(md)))

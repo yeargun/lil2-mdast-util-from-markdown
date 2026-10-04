@@ -29,14 +29,26 @@ Like lil2-micromark, it ships a `dist/` build and a `dist/browser/` build (named
 
 ## Measured (2026-10-04)
 
-Same surface: `fromMarkdown(value)`. Upstream is bundled with esbuild and minified by Terser, esbuild and Oxc
-(best shown). lil2 is the shipped Brotli-objective build.
+The `browser` build against mdast-util-from-markdown@2.0.3 bundled for the browser with esbuild and minified by Terser, esbuild and Oxc
+(the smallest shown). Each objective is its own LilScript build (effort level 12, `lazy_functions`).
 
 | | lil2 | upstream, best minifier | difference |
 |---|---:|---:|---:|
-| raw | 67,977 | 84,774 (Terser) | −19.8% |
-| gzip (9) | 26,095 | 27,170 (Terser) | −4.0% |
-| Brotli (11) | 21,912 | 23,436 (Terser) | −6.5% |
+| raw | 48,453 | 56,955 (Terser) | −14.9% |
+| gzip (9) | 15,613 | 15,491 (Terser) | +0.8% |
+| Brotli (11) | 13,748 | 13,831 (Terser) | −0.6% |
+
+Speed, upstream → lil2: `fromMarkdown(value)`, median per call in a fresh browser context per lane, after checking that both
+give the same output (Playwright; Chromium 151, Firefox 153; AMD EPYC 7763 64-Core Processor). Cold rows are the first import and the
+first call of a fresh page.
+
+| | Chromium | Firefox |
+|---|---:|---:|
+| chat (1 KB) | 0.60 → 0.27 ms (0.45×) | 1.00 → 0.54 ms (0.54×) |
+| readme (26 KB) | 14.9 → 6.23 ms (0.42×) | 31.0 → 13.0 ms (0.42×) |
+| large (222 KB) | 156 → 65.1 ms (0.42×) | 379 → 124 ms (0.33×) |
+| import, cold | 5.00 → 5.30 ms | 9.00 → 9.00 ms |
+| first call, cold | 11.6 → 10.8 ms | 12.0 → 10.0 ms |
 
 ## Behaviour
 
