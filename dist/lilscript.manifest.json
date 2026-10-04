@@ -7,25 +7,53 @@
       "format": "esm",
       "entries": [
         {
-          "name": "index",
+          "name": "constants",
+          "file": "constants.js",
+          "dynamic": false,
+          "closure": [
+            "constants.js"
+          ],
+          "row": 429,
+          "raw_row": 956
+        },
+        {
+          "name": "from-markdown",
           "file": "from-markdown.js",
           "dynamic": false,
           "closure": [
             "from-markdown.js"
           ],
-          "row": 22453,
-          "raw_row": 70071
+          "row": 22359,
+          "raw_row": 70706
         }
       ],
       "files": [
+        {
+          "file": "constants.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "constants"
+          ],
+          "modules": [
+            "mdast/tree.lil"
+          ],
+          "anchored": false,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 956,
+          "codec_bytes": 429,
+          "sha256": "fb9567a9df58ab615b7b88f65be3650f2062e5b83c6fe7a7c801f72fb2e34ac2"
+        },
         {
           "file": "from-markdown.js",
           "role": "entry",
           "source_map_for": null,
           "label": [
-            "index"
+            "from-markdown"
           ],
           "modules": [
+            "mdast/tree.lil",
             "index.lil",
             "mdast/parse.lil",
             "micromark/parse.lil",
@@ -33,7 +61,6 @@
             "micromark/preprocess.lil",
             "micromark/tokenizer.lil",
             "micromark/initialize.lil",
-            "micromark/types.lil",
             "micromark/factories.lil",
             "micromark/constructs/basic.lil",
             "micromark/util.lil",
@@ -45,22 +72,21 @@
             "micromark/constructs/inline.lil",
             "micromark/constructs/attention.lil",
             "micromark/constructs/label.lil",
-            "mdast/from-markdown.lil",
-            "mdast/tree.lil"
+            "mdast/from-markdown.lil"
           ],
           "anchored": true,
           "imports": [],
           "dynamic_imports": [],
-          "bytes": 70071,
-          "codec_bytes": 22453,
-          "sha256": "f1b98c07336cc68d87d4fce8ef93c574403898bbe3d85a59ff3b5bccb6b348ff"
+          "bytes": 70706,
+          "codec_bytes": 22359,
+          "sha256": "a5ca470a693a232b65daa60fabc1ca28deeafb6d3aae596a21b968fd6d1c90a9"
         }
       ],
       "side_effects": [
         "from-markdown.js"
       ],
-      "codec_total": 22453,
-      "rows_total": 22453,
+      "codec_total": 22788,
+      "rows_total": 22788,
       "setters": 0,
       "output": "primary",
       "codec": "brotli",
@@ -76,58 +102,78 @@
         }
       },
       "policy_fingerprint": [
-        28,
-        166,
-        175,
+        46,
+        216,
+        54,
+        22,
         34,
-        137,
+        153,
+        182,
+        47,
+        130,
+        74,
+        220,
+        159,
+        188,
+        84,
+        205,
+        27,
+        235,
+        196,
+        18,
+        196,
+        152,
+        29,
+        221,
+        2,
+        28,
         21,
-        232,
-        155,
-        212,
-        191,
-        198,
-        164,
-        242,
-        210,
-        158,
-        35,
-        121,
-        106,
-        43,
-        133,
-        114,
-        31,
-        81,
-        198,
-        129,
-        32,
-        85,
-        236,
-        251,
-        245,
-        115,
-        209
+        125,
+        252,
+        50,
+        98,
+        118,
+        255
       ]
     }
   ],
-  "source_sha256": "36ea1919abaccea42af146c33b345232b555affe50d3fbbc9ec9900964d698b2",
+  "source_sha256": "9cf0fd9cd286c7b566dc22828344de8fa2d412ffeadaf69d1d991f1b04dcfc00",
   "inputs": {
     "root": 0,
     "entries": [
       {
-        "name": "index",
+        "name": "constants",
         "module": 0
+      },
+      {
+        "name": "from-markdown",
+        "module": 2
       }
     ],
     "modules": [
+      {
+        "path": "/home/azureuser/lilscript-work/lil2/prod-snapshots/lil2-mdast-util-from-markdown/src/constants.lil",
+        "bytes": 1426,
+        "sha256": "d39ab23edbad6bce3565c02af02acd3225f49d43640b0b51dee3e9ec23fac440",
+        "dependencies": [
+          1
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/lilscript-work/lil2/prod-snapshots/lil2-mdast-util-from-markdown/src/mdast/tree.lil",
+        "bytes": 6642,
+        "sha256": "829f7c145942c47ed5a64ee66799c74c67524e1fb922a89ed6708551a2a9c92b",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
       {
         "path": "/home/azureuser/lilscript-work/lil2/prod-snapshots/lil2-mdast-util-from-markdown/src/index.lil",
         "bytes": 1090,
         "sha256": "5bb7aa9223d3e881d624c6c32a80e69ff37d867215d569f27a85b3098901271d",
         "dependencies": [
-          1,
-          20
+          3,
+          1
         ],
         "dynamic_dependencies": []
       },
@@ -136,10 +182,10 @@
         "bytes": 1208,
         "sha256": "239d92ff7ff46044067b20c539ba483d89e9824d959d7008658a293743454236",
         "dependencies": [
-          2,
-          5,
-          19,
-          20
+          4,
+          7,
+          21,
+          1
         ],
         "dynamic_dependencies": []
       },
@@ -148,18 +194,18 @@
         "bytes": 6369,
         "sha256": "f6eed67dfd8d602382c6c32fa048e9ce9838265f9fba54c10eb9abe91c819a53",
         "dependencies": [
-          3,
-          4,
           5,
           6,
-          13,
-          9,
-          12,
-          14,
+          7,
+          8,
           15,
+          11,
+          14,
           16,
           17,
-          18
+          18,
+          19,
+          20
         ],
         "dynamic_dependencies": []
       },
@@ -175,7 +221,7 @@
         "bytes": 1296,
         "sha256": "e023cdadf51326535197f3b564a6af05a8f3f9f9abdfda451e02d63c429885dc",
         "dependencies": [
-          3
+          5
         ],
         "dynamic_dependencies": []
       },
@@ -184,7 +230,7 @@
         "bytes": 27616,
         "sha256": "e3f30a934b2f2bf1a5cf3c44aaabcd2a1912523901e0112b4b1a7fd545347315",
         "dependencies": [
-          3
+          5
         ],
         "dynamic_dependencies": []
       },
@@ -193,12 +239,12 @@
         "bytes": 14484,
         "sha256": "18e3479f9f2f8cd13d4a78e6242b3ed22d378ad8cca4c55c9f55758895447ddc",
         "dependencies": [
-          3,
-          7,
           5,
-          8,
           9,
-          12
+          7,
+          10,
+          11,
+          14
         ],
         "dynamic_dependencies": []
       },
@@ -214,9 +260,9 @@
         "bytes": 7493,
         "sha256": "ca80919c1bc134c2439a6fd447008f190ad049daa1a19a1585ca0fc212baef53",
         "dependencies": [
-          3,
-          7,
-          5
+          5,
+          9,
+          7
         ],
         "dynamic_dependencies": []
       },
@@ -225,11 +271,11 @@
         "bytes": 18657,
         "sha256": "90d2260e03411b06192989279bb224231cf16d55db8a269b75f95b2592a74465",
         "dependencies": [
-          3,
-          7,
           5,
-          8,
-          10
+          9,
+          7,
+          10,
+          12
         ],
         "dynamic_dependencies": []
       },
@@ -238,8 +284,8 @@
         "bytes": 7500,
         "sha256": "31fc6b4da3bfb47f56f61a6178856a14220e79ef4f87ba2eb04381edca67c6b1",
         "dependencies": [
-          3,
-          11
+          5,
+          13
         ],
         "dynamic_dependencies": []
       },
@@ -255,12 +301,12 @@
         "bytes": 12928,
         "sha256": "6c3d121f9677445a37cff98576bf1d7c99a6c9b1a2c4348fac4fc9b5bed29978",
         "dependencies": [
-          3,
-          7,
           5,
-          8,
-          13,
-          10
+          9,
+          7,
+          10,
+          15,
+          12
         ],
         "dynamic_dependencies": []
       },
@@ -269,9 +315,9 @@
         "bytes": 8599,
         "sha256": "3a5a1210a80bf8fde847542ea9d778175f8874c9dc648304d75ddbd2e2b333bc",
         "dependencies": [
-          3,
-          7,
-          5
+          5,
+          9,
+          7
         ],
         "dynamic_dependencies": []
       },
@@ -280,11 +326,11 @@
         "bytes": 7975,
         "sha256": "b1a01f6045fc39679eb701fd44d0577136344abac44857f5ca9de3c7b69566aa",
         "dependencies": [
-          3,
-          7,
           5,
-          8,
-          9
+          9,
+          7,
+          10,
+          11
         ],
         "dynamic_dependencies": []
       },
@@ -293,10 +339,10 @@
         "bytes": 14542,
         "sha256": "772de9988dd106ecc960233adb95f633bb3841866d8bcd412dd510d7b17382d1",
         "dependencies": [
-          3,
-          7,
           5,
-          9
+          9,
+          7,
+          11
         ],
         "dynamic_dependencies": []
       },
@@ -305,10 +351,10 @@
         "bytes": 12774,
         "sha256": "ad733d89f0e585abe7c2684a35bd9fbe30cbe48098f39f1b424c1a4485e6b647",
         "dependencies": [
-          3,
-          7,
           5,
-          8
+          9,
+          7,
+          10
         ],
         "dynamic_dependencies": []
       },
@@ -317,9 +363,9 @@
         "bytes": 5570,
         "sha256": "47636b6ef5cb02ec9ea475303dc38d2534c239273aaa86b9a5ff160fd4059bd4",
         "dependencies": [
-          3,
-          7,
-          5
+          5,
+          9,
+          7
         ],
         "dynamic_dependencies": []
       },
@@ -328,11 +374,11 @@
         "bytes": 10432,
         "sha256": "ed1ab40d3bdbb64dafa396786b5547283a3b5617790c1ca0e6272a7220a3b25a",
         "dependencies": [
-          3,
-          7,
           5,
-          8,
-          10
+          9,
+          7,
+          10,
+          12
         ],
         "dynamic_dependencies": []
       },
@@ -341,19 +387,12 @@
         "bytes": 24077,
         "sha256": "512989ae656118a98b2ebecd67e3713ce3ace55322a92122fd0138b2e906b08c",
         "dependencies": [
-          3,
-          7,
           5,
-          10,
-          20
+          9,
+          7,
+          12,
+          1
         ],
-        "dynamic_dependencies": []
-      },
-      {
-        "path": "/home/azureuser/lilscript-work/lil2/prod-snapshots/lil2-mdast-util-from-markdown/src/mdast/tree.lil",
-        "bytes": 6642,
-        "sha256": "829f7c145942c47ed5a64ee66799c74c67524e1fb922a89ed6708551a2a9c92b",
-        "dependencies": [],
         "dynamic_dependencies": []
       }
     ],
