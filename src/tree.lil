@@ -30,9 +30,16 @@ export const int K_LINK = 16;
 export const int K_IMAGE = 17;
 export const int K_LINK_REFERENCE = 18;
 export const int K_IMAGE_REFERENCE = 19;
+// GFM (mdast-util-gfm). A table keeps its `align` in s1, one character per column: n (null), l, c, r.
+export const int K_DELETE = 20;
+export const int K_TABLE = 21;
+export const int K_TABLE_ROW = 22;
+export const int K_TABLE_CELL = 23;
+export const int K_FOOTNOTE_DEFINITION = 24;
+export const int K_FOOTNOTE_REFERENCE = 25;
 
 // Kind names in id order; extensions (GFM, math) register more.
-export string[] kindNames = ["root", "fragment", "paragraph", "heading", "thematicBreak", "blockquote", "list", "listItem", "html", "code", "definition", "text", "emphasis", "strong", "inlineCode", "break", "link", "image", "linkReference", "imageReference"];
+export string[] kindNames = ["root", "fragment", "paragraph", "heading", "thematicBreak", "blockquote", "list", "listItem", "html", "code", "definition", "text", "emphasis", "strong", "inlineCode", "break", "link", "image", "linkReference", "imageReference", "delete", "table", "tableRow", "tableCell", "footnoteDefinition", "footnoteReference"];
 
 export int defineKind(string name) {
   int index = kindNames.indexOf(name);
@@ -68,12 +75,10 @@ export class Tree {
   int[] lastChild;
   int[] nextSibling;
   int[] previousSibling;
-  int[] sLine;
-  int[] sColumn;
+  // Positions are offsets; line and column come from `lineStarts` (the parser's line table).
   int[] sOffset;
-  int[] eLine;
-  int[] eColumn;
   int[] eOffset;
+  int[] lineStarts;
   int[] num;
   string[] s1;
   string[] s2;
@@ -89,12 +94,9 @@ export class Tree {
     this.lastChild = [];
     this.nextSibling = [];
     this.previousSibling = [];
-    this.sLine = [];
-    this.sColumn = [];
     this.sOffset = [];
-    this.eLine = [];
-    this.eColumn = [];
     this.eOffset = [];
+    this.lineStarts = [0];
     this.num = [];
     this.s1 = [];
     this.s2 = [];
@@ -112,11 +114,7 @@ export class Tree {
     this.lastChild.push(-1);
     this.nextSibling.push(-1);
     this.previousSibling.push(-1);
-    this.sLine.push(0);
-    this.sColumn.push(0);
     this.sOffset.push(0);
-    this.eLine.push(0);
-    this.eColumn.push(0);
     this.eOffset.push(0);
     this.num.push(0);
     this.s1.push("");
@@ -176,6 +174,25 @@ export class Tree {
     }
     return count;
   }
+}
+
+// The 1-based line and column of an offset, from a line table.
+export int lineAt(int[] lineStarts, int offset) {
+  int low = 0;
+  int high = lineStarts.length - 1;
+  while (low < high) {
+    int middle = (low + high + 1) >> 1;
+    if (lineStarts[middle] <= offset) {
+      low = middle;
+    } else {
+      high = middle - 1;
+    }
+  }
+  return low + 1;
+}
+
+export int columnAt(int[] lineStarts, int offset) {
+  return offset - lineStarts[lineAt(lineStarts, offset) - 1] + 1;
 }
 
 // mdast-util-to-string with its defaults (images contribute their alt, html its value).

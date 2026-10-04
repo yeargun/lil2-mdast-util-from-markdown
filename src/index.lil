@@ -1,17 +1,26 @@
 // lil2-mdast-util-from-markdown: markdown to an mdast arena.
 
-import { preprocess } from "./micromark/preprocess.lil";
 import { combineAll, createParser, parseDocument } from "./micromark/parse.lil";
 import { Parser } from "./micromark/tokenizer.lil";
 import { FromMarkdown, installCommonmark } from "./from-markdown.lil";
-import { Tree } from "./tree.lil";
+import { Tree, kindNames } from "./tree.lil";
 
-// Parses `value`; the root is node 0 of the returned tree.
-export Tree fromMarkdown(string value) {
+// Parses `value` into the typed arena (root: node 0). The other lil2 layers use this.
+export Tree fromMarkdownTree(string value) {
   Parser parser = createParser(combineAll([]));
-  int[] events = parseDocument(parser, preprocess(value));
+  int[] events = parseDocument(parser, value);
   FromMarkdown compiler = new FromMarkdown(parser);
   installCommonmark(compiler);
   compiler.compile(events);
   return compiler.tree;
+}
+
+// The tree as positional columns (the arena's own arrays, not copies), indexed by node id; node 0 is the
+// root. `-1` is "none" in the link columns; offsets resolve to line and column through `lineStarts`.
+//   [0] kind        [1] flags       [2] parent      [3] firstChild  [4] nextSibling
+//   [5] startOffset [6] endOffset   [7] num         [8] s1          [9] s2
+//   [10] s3         [11] identifier [12] label      [13] lineStarts [14] kindNames
+export JsValue fromMarkdown(string value) {
+  Tree t = fromMarkdownTree(value);
+  return [t.kind, t.flags, t.parent, t.firstChild, t.nextSibling, t.sOffset, t.eOffset, t.num, t.s1, t.s2, t.s3, t.identifier, t.label, t.lineStarts, kindNames];
 }

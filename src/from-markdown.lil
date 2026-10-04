@@ -71,15 +71,11 @@ export class FromMarkdown {
   }
 
   void setStart(int node, int token) {
-    this.tree.sLine[node] = this.tokens.sLine[token];
-    this.tree.sColumn[node] = this.tokens.sColumn[token];
     this.tree.sOffset[node] = this.tokens.sOffset[token];
     this.tree.set(node, N_HAS_POSITION);
   }
 
   void setEnd(int node, int token) {
-    this.tree.eLine[node] = this.tokens.eLine[token];
-    this.tree.eColumn[node] = this.tokens.eColumn[token];
     this.tree.eOffset[node] = this.tokens.eOffset[token];
     this.tree.set(node, N_END_SET);
   }
@@ -225,6 +221,7 @@ export class FromMarkdown {
 
   int compile(int[] events) {
     Tree tree = this.tree;
+    tree.lineStarts = this.parser.lineStarts;
     int root = tree.create(K_ROOT, 0);
     this.stack = [root];
     int[] listStack = [];
@@ -254,10 +251,6 @@ export class FromMarkdown {
       this.setStart(root, eventToken(events[0]));
       this.setEnd(root, eventToken(events[events.length - 2]));
     } else {
-      tree.sLine[root] = 1;
-      tree.sColumn[root] = 1;
-      tree.eLine[root] = 1;
-      tree.eColumn[root] = 1;
       tree.set(root, N_HAS_POSITION);
       tree.set(root, N_END_SET);
     }
