@@ -1,0 +1,17 @@
+// lil2-mdast-util-from-markdown: markdown to an mdast arena.
+
+import { preprocess } from "./micromark/preprocess.lil";
+import { combineAll, createParser, parseDocument } from "./micromark/parse.lil";
+import { Parser } from "./micromark/tokenizer.lil";
+import { FromMarkdown, installCommonmark } from "./from-markdown.lil";
+import { Tree } from "./tree.lil";
+
+// Parses `value`; the root is node 0 of the returned tree.
+export Tree fromMarkdown(string value) {
+  Parser parser = createParser(combineAll([]));
+  int[] events = parseDocument(parser, preprocess(value));
+  FromMarkdown compiler = new FromMarkdown(parser);
+  installCommonmark(compiler);
+  compiler.compile(events);
+  return compiler.tree;
+}

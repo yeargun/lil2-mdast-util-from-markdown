@@ -1,0 +1,69 @@
+// Test-only: the arena as upstream's mdast JSON (key order is irrelevant; the test compares deeply).
+import { fromMarkdown } from "../../src/index.lil";
+import { K_BREAK, K_CODE, K_DEFINITION, K_HEADING, K_HTML, K_IMAGE, K_IMAGE_REFERENCE, K_INLINE_CODE, K_LINK, K_LINK_REFERENCE, K_LIST, K_LIST_ITEM, K_TEXT, K_THEMATIC_BREAK, N_CHECKED, N_CHECKED_SET, N_END_SET, N_HAS_POSITION, N_ORDERED, N_S2_SET, N_S3_SET, N_SPREAD, N_START_SET, Tree, kindNames } from "../../src/tree.lil";
+
+extern JsValue JSON;
+
+string q(string value) {
+  return JS.assume(JSON.stringify(value));
+}
+
+string nullable(Tree tree, int node, int flag, string value) {
+  return if (tree.has(node, flag)) { q(value) } else { "null" };
+}
+
+string position(Tree tree, int node) {
+  string start = "{\"line\":" + tree.sLine[node] + ",\"column\":" + tree.sColumn[node] + ",\"offset\":" + tree.sOffset[node] + "}";
+  string end = if (tree.has(node, N_END_SET)) {
+    "{\"line\":" + tree.eLine[node] + ",\"column\":" + tree.eColumn[node] + ",\"offset\":" + tree.eOffset[node] + "}"
+  } else {
+    "null"
+  };
+  return ",\"position\":{\"start\":" + start + ",\"end\":" + end + "}";
+}
+
+string node(Tree tree, int id) {
+  int kind = tree.kind[id];
+  string out = "{\"type\":" + q(kindNames[kind]);
+  if (kind == K_TEXT || kind == K_HTML || kind == K_INLINE_CODE) {
+    out += ",\"value\":" + q(tree.s1[id]);
+  } else if (kind == K_CODE) {
+    out += ",\"lang\":" + nullable(tree, id, N_S2_SET, tree.s2[id]) + ",\"meta\":" + nullable(tree, id, N_S3_SET, tree.s3[id]) + ",\"value\":" + q(tree.s1[id]);
+  } else if (kind == K_HEADING) {
+    out += ",\"depth\":" + tree.num[id];
+  } else if (kind == K_LIST) {
+    out += ",\"ordered\":" + (if (tree.has(id, N_ORDERED)) { "true" } else { "false" }) + ",\"start\":" + (if (tree.has(id, N_START_SET)) { "" + tree.num[id] } else { "null" }) + ",\"spread\":" + (if (tree.has(id, N_SPREAD)) { "true" } else { "false" });
+  } else if (kind == K_LIST_ITEM) {
+    out += ",\"spread\":" + (if (tree.has(id, N_SPREAD)) { "true" } else { "false" }) + ",\"checked\":" + (if (tree.has(id, N_CHECKED_SET)) { if (tree.has(id, N_CHECKED)) { "true" } else { "false" } } else { "null" });
+  } else if (kind == K_DEFINITION) {
+    out += ",\"identifier\":" + q(tree.identifier[id]) + ",\"label\":" + q(tree.label[id]) + ",\"title\":" + nullable(tree, id, N_S2_SET, tree.s2[id]) + ",\"url\":" + q(tree.s1[id]);
+  } else if (kind == K_LINK) {
+    out += ",\"title\":" + nullable(tree, id, N_S2_SET, tree.s2[id]) + ",\"url\":" + q(tree.s1[id]);
+  } else if (kind == K_IMAGE) {
+    out += ",\"title\":" + nullable(tree, id, N_S2_SET, tree.s2[id]) + ",\"url\":" + q(tree.s1[id]) + ",\"alt\":" + nullable(tree, id, N_S3_SET, tree.s3[id]);
+  } else if (kind == K_LINK_REFERENCE || kind == K_IMAGE_REFERENCE) {
+    string[] types = ["shortcut", "collapsed", "full"];
+    out += ",\"label\":" + q(tree.label[id]) + ",\"identifier\":" + q(tree.identifier[id]) + ",\"referenceType\":" + q(types[tree.num[id]]);
+    if (kind == K_IMAGE_REFERENCE) {
+      out += ",\"alt\":" + nullable(tree, id, N_S3_SET, tree.s3[id]);
+    }
+  }
+  if (kind != K_TEXT && kind != K_HTML && kind != K_INLINE_CODE && kind != K_CODE && kind != K_THEMATIC_BREAK && kind != K_BREAK && kind != K_DEFINITION && kind != K_IMAGE && kind != K_IMAGE_REFERENCE) {
+    string[] children = [];
+    int child = tree.firstChild[id];
+    while (child >= 0) {
+      children.push(node(tree, child));
+      child = tree.nextSibling[child];
+    }
+    out += ",\"children\":[" + children.join(",") + "]";
+  }
+  if (tree.has(id, N_HAS_POSITION)) {
+    out += position(tree, id);
+  }
+  return out + "}";
+}
+
+export string treeJson(string value) {
+  Tree tree = fromMarkdown(value);
+  return node(tree, 0);
+}
