@@ -6,19 +6,34 @@
   "type": "module",
   "license": "MIT",
   "author": "yeargun",
-  "repository": {"type": "git", "url": "git+https://github.com/yeargun/lil2-mdast-util-from-markdown.git"},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeargun/lil2-mdast-util-from-markdown.git"
+  },
   "homepage": "https://yeargun.github.io/lil2-mdast-util-from-markdown/",
   "main": "./dist/from-markdown.js",
-  "exports": {".": "./dist/from-markdown.js"},
+  "exports": {
+    ".": {
+      "convex": "./dist/from-markdown.js",
+      "deno": "./dist/from-markdown.js",
+      "edge-light": "./dist/from-markdown.js",
+      "react-native": "./dist/from-markdown.js",
+      "worker": "./dist/from-markdown.js",
+      "workerd": "./dist/from-markdown.js",
+      "browser": "./dist/browser/from-markdown.js",
+      "default": "./dist/from-markdown.js"
+    }
+  },
   "scripts": {
     "check:sources": "node scripts/shared-sources.mjs",
     "build:dev": "node scripts/build.mjs --dev",
     "build": "node scripts/build.mjs",
-    "test": "npm run check:sources && node --test test/differential.test.mjs"
+    "test": "node --test test/differential.test.mjs test/browser.test.mjs"
   },
   "devDependencies": {
     "character-entities": "2.0.2",
     "commonmark.json": "^0.31.0",
-    "mdast-util-from-markdown": "2.0.3"
+    "mdast-util-from-markdown": "2.0.3",
+    "playwright-core": "^1.62.0"
   }
 }

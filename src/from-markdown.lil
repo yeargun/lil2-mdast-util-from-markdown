@@ -1,13 +1,13 @@
 // mdast-util-from-markdown 2.0.3: micromark events to an mdast arena (`Tree`).
 
 import { CR, LF } from "./micromark/codes.lil";
-import { defineType, tAtxHeading, tAtxHeadingSequence, tAutolink, tAutolinkEmail, tAutolinkProtocol, tBlockQuote, tBlockQuoteMarker, tBlockQuotePrefix, tBlockQuotePrefixWhitespace, tCharacterEscape, tCharacterEscapeValue, tCharacterReference, tCharacterReferenceMarkerHexadecimal, tCharacterReferenceMarkerNumeric, tCharacterReferenceValue, tCodeFenced, tCodeFencedFence, tCodeFencedFenceInfo, tCodeFencedFenceMeta, tCodeFlowValue, tCodeIndented, tCodeText, tCodeTextData, tData, tDefinition, tDefinitionDestinationString, tDefinitionLabelString, tDefinitionTitleString, tEmphasis, tHardBreakEscape, tHardBreakTrailing, tHtmlFlow, tHtmlFlowData, tHtmlText, tHtmlTextData, tImage, tLabel, tLabelText, tLineEnding, tLineEndingBlank, tLinePrefix, tLink, tListItemIndent, tListItemMarker, tListItemPrefix, tListItemPrefixWhitespace, tListItemValue, tListOrdered, tListUnordered, tParagraph, tReference, tReferenceString, tResource, tResourceDestinationString, tResourceTitleString, tSetextHeading, tSetextHeadingLineSequence, tSetextHeadingText, tStrong, tThematicBreak, typeNames } from "./micromark/types.lil";
+import { tAtxHeading, tListItem, tAtxHeadingSequence, tAutolink, tAutolinkEmail, tAutolinkProtocol, tBlockQuote, tBlockQuoteMarker, tBlockQuotePrefix, tBlockQuotePrefixWhitespace, tCharacterEscape, tCharacterEscapeValue, tCharacterReference, tCharacterReferenceMarkerHexadecimal, tCharacterReferenceMarkerNumeric, tCharacterReferenceValue, tCodeFenced, tCodeFencedFence, tCodeFencedFenceInfo, tCodeFencedFenceMeta, tCodeFlowValue, tCodeIndented, tCodeText, tCodeTextData, tData, tDefinition, tDefinitionDestinationString, tDefinitionLabelString, tDefinitionTitleString, tEmphasis, tHardBreakEscape, tHardBreakTrailing, tHtmlFlow, tHtmlFlowData, tHtmlText, tHtmlTextData, tImage, tLabel, tLabelText, tLineEnding, tLineEndingBlank, tLinePrefix, tLink, tListItemIndent, tListItemMarker, tListItemPrefix, tListItemPrefixWhitespace, tListItemValue, tListOrdered, tListUnordered, tParagraph, tReference, tReferenceString, tResource, tResourceDestinationString, tResourceTitleString, tSetextHeading, tSetextHeadingLineSequence, tSetextHeadingText, tStrong, tThematicBreak } from "./micromark/types.lil";
 import { Parser, Tokens, enterEvent, eventToken, exitEvent, isEnter, serializeToken, splice } from "./micromark/tokenizer.lil";
 import { decodeNamed, decodeNumeric, decodeString, normalizeIdentifier } from "./micromark/util.lil";
-import { K_BLOCKQUOTE, K_BREAK, K_CODE, K_DEFINITION, K_EMPHASIS, K_FRAGMENT, K_HEADING, K_HTML, K_IMAGE, K_IMAGE_REFERENCE, K_INLINE_CODE, K_LINK, K_LINK_REFERENCE, K_LIST, K_LIST_ITEM, K_PARAGRAPH, K_ROOT, K_STRONG, K_TEXT, K_THEMATIC_BREAK, N_CHECKED_SET, N_HAS_POSITION, N_END_SET, N_IDENTIFIER_SET, N_LABEL_SET, N_ORDERED, N_S2_SET, N_S3_SET, N_SPREAD, N_START_SET, N_URL_SET, Tree, kindNames, toString } from "./tree.lil";
+import { K_BLOCKQUOTE, K_BREAK, K_CODE, K_DEFINITION, K_EMPHASIS, K_FRAGMENT, K_HEADING, K_HTML, K_IMAGE, K_IMAGE_REFERENCE, K_INLINE_CODE, K_LINK, K_LINK_REFERENCE, K_LIST, K_LIST_ITEM, K_PARAGRAPH, K_ROOT, K_STRONG, K_TEXT, K_THEMATIC_BREAK, N_CHECKED_SET, N_HAS_POSITION, N_END_SET, N_IDENTIFIER_SET, N_LABEL_SET, N_ORDERED, N_S2_SET, N_S3_SET, N_SPREAD, N_START_SET, N_URL_SET, Tree, toString } from "./tree.lil";
 
-// Synthetic list item tokens (upstream makes `{type: 'listItem', _spread}` events in `prepareList`).
-export int tListItem = defineType("listItem");
+// Synthetic list item tokens (`tListItem`; upstream makes `{type: 'listItem', _spread}` events in
+// `prepareList`) carry this flag.
 export const int F_SPREAD = 256;
 
 func(FromMarkdown, int)->void noHandler = (FromMarkdown c, int token) => {};
@@ -92,11 +92,11 @@ export class FromMarkdown {
   void close(int token) {
     int node = this.stack.pop();
     if (this.tokenStack.length == 0) {
-      throw "Cannot close `" + typeNames[this.tokens.type[token]] + "`: it’s not open";
+      throw "Cannot close token type " + this.tokens.type[token] + ": it’s not open";
     }
     int open = this.tokenStack.pop();
     if (this.tokens.type[open] != this.tokens.type[token]) {
-      throw "Cannot close `" + typeNames[this.tokens.type[token]] + "`: a different token (`" + typeNames[this.tokens.type[open]] + "`) is open";
+      throw "Cannot close token type " + this.tokens.type[token] + ": a different token (type " + this.tokens.type[open] + ") is open";
     }
     this.setEnd(node, token);
   }
@@ -245,7 +245,7 @@ export class FromMarkdown {
       }
     }
     if (this.tokenStack.length > 0) {
-      throw "Cannot close document, a token (`" + typeNames[this.tokens.type[this.tokenStack[this.tokenStack.length - 1]]] + "`) is still open";
+      throw "Cannot close document, a token (type " + this.tokens.type[this.tokenStack[this.tokenStack.length - 1]] + ") is still open";
     }
     if (events.length > 0) {
       this.setStart(root, eventToken(events[0]));
@@ -254,6 +254,10 @@ export class FromMarkdown {
       tree.set(root, N_HAS_POSITION);
       tree.set(root, N_END_SET);
     }
+    // The mdast string of every identifier id: `normalizeIdentifier(label).toLowerCase()`.
+    tree.identifiers = this.parser.identifierKeys.map((string key) => key.toLowerCase());
+    // Int runs extensions left on tokens (a GFM table's alignments), which nodes point into.
+    tree.aux = this.tokens.aux;
     for (func(Tree)->void transform of this.transforms) {
       transform(tree);
     }
@@ -489,7 +493,7 @@ export void installCommonmark(FromMarkdown c) {
     string label = c.resume();
     int node = c.top();
     c.tree.label[node] = label;
-    c.tree.identifier[node] = normalizeIdentifier(c.slice(token)).toLowerCase();
+    c.tree.identifier[node] = c.parser.identifier(normalizeIdentifier(c.slice(token)));
   });
   c.on(false, tDefinitionTitleString, (FromMarkdown c, int token) => {
     string data = c.resume();
@@ -532,7 +536,7 @@ export void installCommonmark(FromMarkdown c) {
     string text = c.slice(token);
     int ancestor = c.below();
     c.tree.label[ancestor] = decodeString(text);
-    c.tree.identifier[ancestor] = normalizeIdentifier(text).toLowerCase();
+    c.tree.identifier[ancestor] = c.parser.identifier(normalizeIdentifier(text));
   });
   c.on(false, tLineEnding, (FromMarkdown c, int token) => {
     int context = c.top();
@@ -559,7 +563,7 @@ export void installCommonmark(FromMarkdown c) {
     string label = c.resume();
     int node = c.top();
     c.tree.label[node] = label;
-    c.tree.identifier[node] = normalizeIdentifier(c.slice(token)).toLowerCase();
+    c.tree.identifier[node] = c.parser.identifier(normalizeIdentifier(c.slice(token)));
     c.referenceType = 2;
   });
   c.on(false, tResourceDestinationString, (FromMarkdown c, int token) => {

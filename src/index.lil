@@ -3,7 +3,7 @@
 import { combineAll, createParser, parseDocument } from "./micromark/parse.lil";
 import { Parser } from "./micromark/tokenizer.lil";
 import { FromMarkdown, installCommonmark } from "./from-markdown.lil";
-import { Tree, kindNames } from "./tree.lil";
+import { Tree } from "./tree.lil";
 
 // Parses `value` into the typed arena (root: node 0). The other lil2 layers use this.
 export Tree fromMarkdownTree(string value) {
@@ -16,11 +16,14 @@ export Tree fromMarkdownTree(string value) {
 }
 
 // The tree as positional columns (the arena's own arrays, not copies), indexed by node id; node 0 is the
-// root. `-1` is "none" in the link columns; offsets resolve to line and column through `lineStarts`.
+// root. Every enumeration is an int: `kind` is a `K_*`, `identifier` an id into `identifiers` (-1: none),
+// and a table's `num` is the offset of its alignments in `aux` (a count, then one `ALIGN_*` per column).
+// `-1` is "none" in the link columns; offsets resolve to line and column through `lineStarts`.
 //   [0] kind        [1] flags       [2] parent      [3] firstChild  [4] nextSibling
 //   [5] startOffset [6] endOffset   [7] num         [8] s1          [9] s2
-//   [10] s3         [11] identifier [12] label      [13] lineStarts [14] kindNames
+//   [10] s3         [11] identifier [12] label      [13] lineStarts [14] identifiers
+//   [15] aux
 export JsValue fromMarkdown(string value) {
   Tree t = fromMarkdownTree(value);
-  return [t.kind, t.flags, t.parent, t.firstChild, t.nextSibling, t.sOffset, t.eOffset, t.num, t.s1, t.s2, t.s3, t.identifier, t.label, t.lineStarts, kindNames];
+  return [t.kind, t.flags, t.parent, t.firstChild, t.nextSibling, t.sOffset, t.eOffset, t.num, t.s1, t.s2, t.s3, t.identifier, t.label, t.lineStarts, t.identifiers, t.aux];
 }

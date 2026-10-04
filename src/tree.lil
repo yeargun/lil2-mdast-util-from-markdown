@@ -7,8 +7,10 @@
 //   link: url / title? / -              image: url / title? / alt?
 //   linkReference: - / - / -            imageReference: - / - / alt?
 // Reference slots (identifier / label?) are kept apart so a link can hold both while it is open,
-// exactly as upstream's node does before `onexitlink` deletes one pair.
-// Numbers: heading depth; list start (null flag); reference type (0 shortcut, 1 collapsed, 2 full).
+// exactly as upstream's node does before `onexitlink` deletes one pair. An identifier is an int id;
+// `identifiers` holds each id's mdast string.
+// Numbers: heading depth; list start (null flag); reference type (0 shortcut, 1 collapsed, 2 full);
+// for a table, the offset of its alignments in `aux` (a count, then one `ALIGN_*` per column).
 
 export const int K_ROOT = 0;
 export const int K_FRAGMENT = 1;
@@ -30,25 +32,22 @@ export const int K_LINK = 16;
 export const int K_IMAGE = 17;
 export const int K_LINK_REFERENCE = 18;
 export const int K_IMAGE_REFERENCE = 19;
-// GFM (mdast-util-gfm). A table keeps its `align` in s1, one character per column: n (null), l, c, r.
+// GFM (mdast-util-gfm).
 export const int K_DELETE = 20;
 export const int K_TABLE = 21;
 export const int K_TABLE_ROW = 22;
 export const int K_TABLE_CELL = 23;
 export const int K_FOOTNOTE_DEFINITION = 24;
 export const int K_FOOTNOTE_REFERENCE = 25;
+// Math (mdast-util-math) owns the next range.
+export const int KINDS_MATH = 26;
+export const int KIND_LIMIT = 32;
 
-// Kind names in id order; extensions (GFM, math) register more.
-export string[] kindNames = ["root", "fragment", "paragraph", "heading", "thematicBreak", "blockquote", "list", "listItem", "html", "code", "definition", "text", "emphasis", "strong", "inlineCode", "break", "link", "image", "linkReference", "imageReference", "delete", "table", "tableRow", "tableCell", "footnoteDefinition", "footnoteReference"];
-
-export int defineKind(string name) {
-  int index = kindNames.indexOf(name);
-  if (index >= 0) {
-    return index;
-  }
-  kindNames.push(name);
-  return kindNames.length - 1;
-}
+// Table cell alignment (mdast `align` items: null, left, center, right).
+export const int ALIGN_NONE = 0;
+export const int ALIGN_LEFT = 1;
+export const int ALIGN_CENTER = 2;
+export const int ALIGN_RIGHT = 3;
 
 // Flags.
 export const int N_S2_SET = 1;
@@ -83,8 +82,10 @@ export class Tree {
   string[] s1;
   string[] s2;
   string[] s3;
-  string[] identifier;
+  int[] identifier;
+  string[] identifiers;
   string[] label;
+  int[] aux;
 
   init() {
     this.kind = [];
@@ -102,7 +103,9 @@ export class Tree {
     this.s2 = [];
     this.s3 = [];
     this.identifier = [];
+    this.identifiers = [];
     this.label = [];
+    this.aux = [];
   }
 
   int create(int kind, int flags) {
@@ -120,7 +123,7 @@ export class Tree {
     this.s1.push("");
     this.s2.push("");
     this.s3.push("");
-    this.identifier.push("");
+    this.identifier.push(-1);
     this.label.push("");
     return id;
   }
@@ -163,6 +166,15 @@ export class Tree {
     }
     this.firstChild[from] = -1;
     this.lastChild[from] = -1;
+  }
+
+  // A table's column alignments (`align`).
+  int alignCount(int table) {
+    return this.aux[this.num[table]];
+  }
+
+  int alignAt(int table, int column) {
+    return this.aux[this.num[table] + 1 + column];
   }
 
   int childCount(int node) {
